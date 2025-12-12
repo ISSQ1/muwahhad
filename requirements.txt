@@ -1,0 +1,16 @@
+flask==3.0.0
+flask-cors==4.0.0
+numpy==1.26.0
+numba==0.59.1
+rembg==2.0.60
+openai==1.12.0
+pillow==10.2.0
+mediapipe==0.10.9
+onnxruntime==1.16.3
+
+# Additional dependencies required to run the FastAPI backend.  FastAPI
+# provides a modern, asynchronous web framework that is easy to integrate
+# with the existing React frontend.  Uvicorn serves as the ASGI server
+# for running the application.
+fastapi
+uvicorn

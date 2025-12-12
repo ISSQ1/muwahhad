@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>موحد - فاحص الهوية الوطنية السعودية</title>
+  <style>
+    :root {
+      --primary: #047857;
+      --primary-hover: #065f46;
+      --primary-light: #ecfdf5;
+      --success: #15803d;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+      color: white;
+      padding: 32px 0;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 40px;
+    }
+
+    .header-content {
+      text-align: center;
+    }
+
+    .header-logo {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .header-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .header-subtitle {
+      font-size: 15px;
+      opacity: 0.95;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Flow Steps */
+    .flow-container {
+      margin-bottom: 24px;
+    }
+
+    .flow-step {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .flow-step.disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .hidden-step {
+      display: none;
+    }
+
+    .flow-step::after {
+      content: '';
+      position: absolute;
+      bottom: -24px;
+      right: 50%;
+      transform: translateX(50%);
+      width: 2px;
+      height: 24px;
+      background: linear-gradient(to bottom, var(--border), transparent);
+    }
+
+    .flow-step:last-child::after {
+      display: none;
+    }
+
+    .step-header {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .step-number {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      text-align: center;
+      line-height: 36px;
+      font-weight: 700;
+      font-size: 18px;
+      margin-left: 12px;
+    }
+
+    .step-title {
+      display: inline-block;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+
+    .step-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .step-content {
+      margin-top: 20px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .form-hint {
+      display: block;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-input-label {
+      display: block;
+      padding: 48px 24px;
+      border: 3px dashed var(--border);
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .file-input-label:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .file-input-label.has-file {
+      border-color: var(--success);
+      background: #f0fdf4;
+      border-style: solid;
+    }
+
+    .upload-text {
+      font-size: 16px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .upload-text strong {
+      color: var(--primary);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 6px rgba(4, 120, 87, 0.2);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(4, 120, 87, 0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-secondary);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: #166534;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Status Messages */
+    .alert {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 16px 0;
+      font-size: 15px;
+      border-right: 4px solid;
+      line-height: 1.6;
+    }
+
+    .alert-success {
+      background: #f0fdf4;
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .alert-warning {
+      background: #fffbeb;
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+
+    .alert-info {
+      background: #eff6ff;
+      color: #1e40af;
+      border-color: #3b82f6;
+    }
+
+    /* Results Display */
+    .result-section {
+      margin-top: 24px;
+    }
+
+    .result-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .result-box {
+      background: var(--bg-secondary);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .result-decision {
+      font-size: 18px;
+      font-weight: 700;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .result-decision.success {
+      background: #f0fdf4;
+      color: var(--success);
+      border: 2px solid var(--success);
+    }
+
+    .result-decision.error {
+      background: #fef2f2;
+      color: var(--danger);
+      border: 2px solid var(--danger);
+    }
+
+    .result-decision.neutral {
+      background: #eff6ff;
+      color: #1e40af;
+      border: 2px solid #3b82f6;
+    }
+
+    .issues-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .issues-list li {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      background: white;
+      border-radius: 6px;
+      border-right: 3px solid;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .issues-list.fatal li {
+      border-right-color: var(--danger);
+      background: #fef2f2;
+    }
+
+    .issues-list.warning li {
+      border-right-color: var(--warning);
+      background: #fffbeb;
+    }
+
+    .empty-message {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Image Preview */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .preview-item {
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      overflow: hidden;
+      background: white;
+    }
+
+    .preview-label {
+      padding: 14px;
+      background: var(--bg-secondary);
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .preview-image-container {
+      aspect-ratio: 3/4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: repeating-linear-gradient(
+        45deg,
+        #f8fafc,
+        #f8fafc 10px,
+        #e2e8f0 10px,
+        #e2e8f0 20px
+      );
+      position: relative;
+    }
+
+    .preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .preview-image.visible {
+      display: block;
+    }
+
+    .preview-placeholder {
+      color: var(--text-secondary);
+      font-size: 14px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* JSON Viewer */
+    .json-viewer {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    /* Processing Steps List */
+    .processing-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .processing-list li {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      background: var(--primary-light);
+      border-radius: 6px;
+      border-right: 3px solid var(--primary);
+      font-size: 14px;
+    }
+
+    /* Loader */
+    .loader {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-title {
+        font-size: 24px;
+      }
+
+      .flow-step {
+        padding: 24px 20px;
+      }
+
+      .step-title {
+        font-size: 19px;
+      }
+
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-logo">موحد</div>
+        <h1 class="header-title">فاحص الهوية الوطنية السعودية</h1>
+        <p class="header-subtitle">نظام آلي متكامل لفحص ومعالجة صور الهوية الوطنية وفقاً للمعايير والاشتراطات الحكومية</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="flow-container">
+
+      <!-- Step 1: Upload Image -->
+      <div class="flow-step" id="step1">
+        <div class="step-header">
+          <span class="step-number">1</span>
+          <h2 class="step-title">رفع صورة الهوية</h2>
+          <p class="step-description">قم باختيار صورة الهوية الوطنية من جهازك. يُفضل أن تكون الصورة واضحة بخلفية بيضاء</p>
+        </div>
+
+        <div class="step-content">
+          <form id="uploadForm">
+            <div class="form-group">
+              <label class="form-label">اختر ملف الصورة</label>
+              <div class="file-input-wrapper">
+                <input type="file" id="photoInput" class="file-input" accept="image/*" required>
+                <label for="photoInput" class="file-input-label" id="fileLabel">
+                  <div class="upload-text">
+                    <strong>اضغط هنا لاختيار الصورة</strong>
+                    <span>أو اسحب الملف وأفلته في هذه المنطقة</span>
+                  </div>
+                </label>
+              </div>
+              <span class="form-hint">الصيغ المدعومة: JPG, PNG, JPEG | الحجم الأقصى: 10 ميجابايت</span>
+            </div>
+
+            <div class="btn-group">
+              <button type="submit" class="btn btn-primary" id="submitBtn">
+                <span>فحص ومعالجة الصورة</span>
+                <span class="loader" style="display:none;" id="submitLoader"></span>
+              </button>
+              <button type="button" class="btn btn-secondary" id="resetBtn">
+                إعادة تعيين
+              </button>
+            </div>
+          </form>
+
+          <div id="uploadStatus"></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Validation Results -->
+      <div class="flow-step disabled hidden-step" id="step2">
+        <div class="step-header">
+          <span class="step-number">2</span>
+          <h2 class="step-title">نتائج الفحص</h2>
+          <p class="step-description">عرض تفصيلي لنتائج فحص الصورة وتحديد حالتها (مقبولة / مرفوضة)</p>
+        </div>
+
+        <div class="step-content" id="resultsContent">
+          <div class="empty-message">
+            في انتظار رفع الصورة لعرض النتائج...
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Image Preview -->
+      <div class="flow-step disabled hidden-step" id="step3">
+        <div class="step-header">
+          <span class="step-number">3</span>
+          <h2 class="step-title">معاينة ومقارنة الصور</h2>
+          <p class="step-description">مقارنة مباشرة بين الصورة الأصلية والصورة بعد المعالجة الآلية</p>
+        </div>
+
+        <div class="step-content">
+          <div class="preview-grid">
+            <div class="preview-item">
+              <div class="preview-label">الصورة الأصلية</div>
+              <div class="preview-image-container">
+                <img id="inputPreview" class="preview-image" alt="الصورة الأصلية">
+                <div class="preview-placeholder" id="inputPlaceholder">
+                  لم يتم رفع صورة بعد
+                </div>
+              </div>
+            </div>
+
+            <div class="preview-item">
+              <div class="preview-label">الصورة بعد المعالجة</div>
+              <div class="preview-image-container">
+                <img id="outputPreview" class="preview-image" alt="الصورة بعد المعالجة">
+                <div class="preview-placeholder" id="outputPlaceholder">
+                  ستظهر الصورة المعالجة هنا تلقائياً
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Actions -->
+      <div class="flow-step disabled hidden-step" id="step4">
+        <div class="step-header">
+          <span class="step-number">4</span>
+          <h2 class="step-title">الإجراءات المتاحة</h2>
+          <p class="step-description">اختر الإجراء المناسب: حفظ الصورة أو المتابعة أو البدء من جديد</p>
+        </div>
+
+        <div class="step-content">
+          <div class="btn-group">
+            <button class="btn btn-success" id="downloadBtn" disabled>
+              تحميل الصورة المعالجة
+            </button>
+            <button class="btn btn-secondary" id="continueBtn" disabled>
+              معالجة صورة جديدة
+            </button>
+            <button class="btn btn-secondary" id="startOverBtn" disabled>
+              البدء من جديد
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const uploadForm = document.getElementById('uploadForm');
+    const photoInput = document.getElementById('photoInput');
+    const fileLabel = document.getElementById('fileLabel');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitLoader = document.getElementById('submitLoader');
+    const resetBtn = document.getElementById('resetBtn');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const resultsContent = document.getElementById('resultsContent');
+    const inputPreview = document.getElementById('inputPreview');
+    const outputPreview = document.getElementById('outputPreview');
+    const inputPlaceholder = document.getElementById('inputPlaceholder');
+    const outputPlaceholder = document.getElementById('outputPlaceholder');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const continueBtn = document.getElementById('continueBtn');
+    const startOverBtn = document.getElementById('startOverBtn');
+
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    const step4 = document.getElementById('step4');
+
+    let currentData = null;
+
+    function enableStep(step) {
+      step.classList.remove('disabled');
+      step.classList.remove('hidden-step');
+    }
+
+    function disableStep(step) {
+      step.classList.add('disabled');
+    }
+
+    function hideStep(step) {
+      step.classList.add('hidden-step');
+    }
+
+    function resetToInitialState() {
+      // Form
+      uploadForm.reset();
+      fileLabel.classList.remove('has-file');
+      fileLabel.querySelector('.upload-text strong').textContent = 'اضغط هنا لاختيار الصورة';
+      fileLabel.querySelector('.upload-text span').textContent = 'أو اسحب الملف وأفلته في هذه المنطقة';
+
+      // Status
+      uploadStatus.innerHTML = '';
+
+      // Results
+      resultsContent.innerHTML = '<div class="empty-message">في انتظار رفع الصورة لعرض النتائج...</div>';
+
+      // Previews
+      inputPreview.src = '';
+      inputPreview.classList.remove('visible');
+      inputPlaceholder.style.display = 'block';
+
+      outputPreview.src = '';
+      outputPreview.classList.remove('visible');
+      outputPlaceholder.style.display = 'block';
+
+      // Steps visibility
+      disableStep(step2);
+      disableStep(step3);
+      disableStep(step4);
+      hideStep(step2);
+      hideStep(step3);
+      hideStep(step4);
+
+      // Buttons
+      downloadBtn.disabled = true;
+      continueBtn.disabled = true;
+      startOverBtn.disabled = true;
+
+      currentData = null;
+    }
+
+    // File Input Change
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        fileLabel.classList.add('has-file');
+        fileLabel.querySelector('.upload-text strong').textContent = file.name;
+        fileLabel.querySelector('.upload-text span').textContent =
+          `${(file.size / 1024 / 1024).toFixed(2)} ميجابايت`;
+        
+        // Show preview immediately (step 3 سيظهر بعد الفحص)
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          inputPreview.src = ev.target.result;
+          inputPreview.classList.add('visible');
+          inputPlaceholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        fileLabel.classList.remove('has-file');
+        fileLabel.querySelector('.upload-text strong').textContent = 'اضغط هنا لاختيار الصورة';
+        fileLabel.querySelector('.upload-text span').textContent = 'أو اسحب الملف وأفلته في هذه المنطقة';
+      }
+    });
+
+    // Form Submit
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const file = photoInput.files[0];
+      if (!file) return;
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitLoader.style.display = 'inline-block';
+      uploadStatus.innerHTML =
+        '<div class="alert alert-info">جاري رفع الصورة وفحصها ومعالجتها، الرجاء الانتظار...</div>';
+
+      // Reset downstream steps
+      disableStep(step2);
+      disableStep(step3);
+      disableStep(step4);
+      hideStep(step2);
+      hideStep(step3);
+      hideStep(step4);
+      resultsContent.innerHTML = '<div class="empty-message">جاري التحميل...</div>';
+      outputPreview.classList.remove('visible');
+      outputPlaceholder.style.display = 'block';
+      downloadBtn.disabled = true;
+      continueBtn.disabled = true;
+      startOverBtn.disabled = true;
+
+      try {
+        const formData = new FormData();
+        formData.append('photo', file);
+
+        const response = await fetch('/process', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        currentData = data;
+
+        if (!data.success) {
+          uploadStatus.innerHTML =
+            `<div class="alert alert-error"><strong>حدث خطأ:</strong> ${data.error || 'خطأ غير معروف'}</div>`;
+          return;
+        }
+
+        // Step 1 done → show Step 2
+        enableStep(step2);
+        uploadStatus.innerHTML =
+          '<div class="alert alert-success"><strong>تم بنجاح!</strong> اكتملت عملية الفحص والمعالجة. تابع النتائج في الخطوة التالية</div>';
+
+        // Update previews (ثم نظهر الخطوة 3)
+        if (data.input_image) {
+          inputPreview.src = `data:image/jpeg;base64,${data.input_image}`;
+          inputPreview.classList.add('visible');
+          inputPlaceholder.style.display = 'none';
+        }
+
+        if (data.output_image) {
+          outputPreview.src = `data:image/jpeg;base64,${data.output_image}`;
+          outputPreview.classList.add('visible');
+          outputPlaceholder.style.display = 'none';
+        } else {
+          outputPreview.src = '';
+          outputPreview.classList.remove('visible');
+          outputPlaceholder.style.display = 'block';
+        }
+
+        // Fill results (الفحص + JSON + المعالجة)
+        displayResults(data);
+
+        // Show Step 3 (preview) & Step 4 (actions)
+        enableStep(step3);
+        enableStep(step4);
+
+        // Enable action buttons
+        downloadBtn.disabled = false;
+        continueBtn.disabled = false;
+        startOverBtn.disabled = false;
+
+        // Scroll to results
+        setTimeout(() => {
+          step2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+
+      } catch (error) {
+        console.error(error);
+        uploadStatus.innerHTML =
+          '<div class="alert alert-error"><strong>خطأ في الاتصال:</strong> تعذر الاتصال بالخادم. الرجاء المحاولة مرة أخرى</div>';
+      } finally {
+        submitBtn.disabled = false;
+        submitLoader.style.display = 'none';
+      }
+    });
+
+    // Display Results Function
+    function displayResults(data) {
+      let html = '';
+
+      const decision = data.decision || 'unknown';
+      let decisionClass = 'neutral';
+      let decisionText = 'تم فحص الصورة، راجع التفاصيل أدناه';
+
+      if (decision === 'rejected') {
+        decisionClass = 'error';
+        decisionText = 'الصورة مرفوضة - يجب إعادة تصوير الهوية';
+      } else if (decision === 'processed') {
+        decisionClass = 'success';
+        decisionText = 'الصورة مقبولة وتم معالجتها بنجاح';
+      }
+
+      // Decision Summary
+      html += `<div class="result-decision ${decisionClass}">${decisionText}</div>`;
+
+      // Fatal Issues
+      html += '<div class="result-section">';
+      html += '<h3 class="result-title">أسباب الرفض (المشاكل الحرجة)</h3>';
+      
+      if (Array.isArray(data.fatal_issues) && data.fatal_issues.length > 0) {
+        html += '<ul class="issues-list fatal">';
+        data.fatal_issues.forEach(issue => {
+          html += `<li><strong>${issue.key}:</strong> ${issue.message}</li>`;
+        });
+        html += '</ul>';
+      } else {
+        html += '<div class="empty-message">لا توجد مشاكل حرجة</div>';
+      }
+      html += '</div>';
+
+      // Warnings
+      html += '<div class="result-section">';
+      html += '<h3 class="result-title">التحذيرات (تحتاج تحسين)</h3>';
+      
+      if (Array.isArray(data.warnings) && data.warnings.length > 0) {
+        html += '<ul class="issues-list warning">';
+        data.warnings.forEach(warning => {
+          html += `<li><strong>${warning.key}:</strong> ${warning.message}</li>`;
+        });
+        html += '</ul>';
+      } else {
+        html += '<div class="empty-message">لا توجد تحذيرات</div>';
+      }
+      html += '</div>';
+
+      // Processing Applied
+      html += '<div class="result-section">';
+      html += '<h3 class="result-title">خطوات المعالجة المطبقة</h3>';
+      
+      if (Array.isArray(data.processing_applied) && data.processing_applied.length > 0) {
+        html += '<ul class="processing-list">';
+        data.processing_applied.forEach(step => {
+          html += `<li>${step}</li>`;
+        });
+        html += '</ul>';
+      } else {
+        html += '<div class="empty-message">لم يتم تطبيق أي معالجة (الصورة مرفوضة أو لم تتغير)</div>';
+      }
+      html += '</div>';
+
+      // Raw JSON Data
+      html += '<div class="result-section">';
+      html += '<h3 class="result-title">البيانات التفصيلية الكاملة (JSON)</h3>';
+      html += '<div class="result-box">';
+      
+      if (data.validation_before) {
+        html += `<pre class="json-viewer">${JSON.stringify(data.validation_before, null, 2)}</pre>`;
+      } else {
+        html += '<div class="empty-message">لا توجد بيانات</div>';
+      }
+      
+      html += '</div>';
+      html += '</div>';
+
+      resultsContent.innerHTML = html;
+    }
+
+    // Download Button
+    downloadBtn.addEventListener('click', () => {
+      if (!currentData) return;
+
+      const imgBase64 = currentData.output_image || currentData.input_image;
+      if (!imgBase64) return;
+
+      const link = document.createElement('a');
+      link.href = `data:image/jpeg;base64,${imgBase64}`;
+      link.download = currentData.decision === 'processed' 
+        ? 'id-photo-processed.jpg' 
+        : 'id-photo.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Continue Button (new image)
+    continueBtn.addEventListener('click', () => {
+      photoInput.value = '';
+      fileLabel.classList.remove('has-file');
+      fileLabel.querySelector('.upload-text strong').textContent = 'اضغط هنا لاختيار الصورة';
+      fileLabel.querySelector('.upload-text span').textContent = 'أو اسحب الملف وأفلته في هذه المنطقة';
+      
+      uploadStatus.innerHTML = '';
+      
+      disableStep(step2);
+      disableStep(step3);
+      disableStep(step4);
+      hideStep(step2);
+      hideStep(step3);
+      hideStep(step4);
+      
+      resultsContent.innerHTML = '<div class="empty-message">في انتظار رفع الصورة لعرض النتائج...</div>';
+      
+      outputPreview.classList.remove('visible');
+      outputPlaceholder.style.display = 'block';
+      
+      downloadBtn.disabled = true;
+      continueBtn.disabled = true;
+      startOverBtn.disabled = true;
+      
+      currentData = null;
+      step1.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Start Over Button (complete reset)
+    startOverBtn.addEventListener('click', () => {
+      resetToInitialState();
+      step1.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Reset Button (soft reset)
+    resetBtn.addEventListener('click', () => {
+      resetToInitialState();
+      step1.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Initial state
+    resetToInitialState();
+  </script>
+</body>
+</html>
